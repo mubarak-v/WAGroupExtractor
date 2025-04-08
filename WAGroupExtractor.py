@@ -41,7 +41,7 @@ except Exception as e:
     exit()
 
 # Open group info
-Ani_function("Find Whatsapp Group ")
+Ani_function(" Group Finder")
 try:
     menu_buttons = driver.find_elements(By.XPATH, '//span[@data-icon="menu"]')
     if len(menu_buttons) >= 2:
@@ -138,34 +138,63 @@ try:
 except Exception as e:
     print(f"❌ Failed during scroll or extraction\nError: {e}")
 
-# Save to Excel
+# Save to csv
+# contact_rows = []
+# for i, number in enumerate(all_phone_numbers, start=1):
+#     contact_rows.append({
+#         "First Name": f"smazio {i}",
+#         "Middle Name": "",
+#         "Last Name": "",
+#         "Phonetic First Name": "",
+#         "Phonetic Middle Name": "",
+#         "Phonetic Last Name": "",
+#         "Name Prefix": "",
+#         "Name Suffix": "",
+#         "Nickname": "",
+#         "File As": "",
+#         "Organization Name": "",
+#         "Organization Title": "",
+#         "Organization Department": "",
+#         "Birthday": "",
+#         "Notes": "",
+#         "Photo": "",
+#         "Labels": "* myContacts",
+#         "Phone 1 - Label": "Mobile",
+#         "Phone 1 - Value": number
+#     })
+
+# df = pd.DataFrame(contact_rows)
+# file_name = f"{group_name.replace(' ', '_')}_contacts.csv"
+# df.to_csv(file_name, index=False)
+
+
+import pandas as pd
+
+# Google Contacts standard header (shortened and adjusted)
+columns = [
+    "First Name", "Middle Name", "Last Name",
+    "Phonetic First Name", "Phonetic Middle Name", "Phonetic Last Name",
+    "Name Prefix", "Name Suffix", "Nickname", "File As",
+    "Organization Name", "Organization Title", "Organization Department",
+    "Birthday", "Notes", "Photo", "Labels",
+    "Phone 1 - Label", "Phone 1 - Value"
+]
+
+# Create contact rows with sample data
 contact_rows = []
 for i, number in enumerate(all_phone_numbers, start=1):
-    contact_rows.append({
-            "First Name": f"smazio {i}",
-            "Middle Name": "",
-            "Last Name": "",
-            "Phonetic First Name": "",
-            "Phonetic Middle Name": "",
-            "Phonetic Last Name": "",
-            "Name Prefix": "",
-            "Name Suffix": "",
-            "Nickname": "",
-            "File As": "",
-            "Organization Name": "",
-            "Organization Title": "",
-            "Organization Department": "",
-            "Birthday": "",
-            "Notes": "",
-            "Photo": "",
-            "Labels": "* myContacts",
-            "Phone 1 - Label": "Mobile",
-            "Phone 1 - Value": number
-        })
+    row = {col: "" for col in columns}
+    row["First Name"] = f"smazio {i}"
+    row["Phone 1 - Label"] = "Mobile"
+    row["Phone 1 - Value"] = number
+    row["Labels"] = "myContacts"  # Don't use "* myContacts"
+    contact_rows.append(row)
 
-df = pd.DataFrame(contact_rows)
-file_name = f"{group_name.replace(' ', '_')}_contacts.xlsx"
-df.to_excel(file_name, index=False)
+# Save to UTF-8 CSV
+df = pd.DataFrame(contact_rows, columns=columns)
+file_name = f"{group_name.replace(' ', '_')}_contacts.csv"
+df.to_csv(file_name, index=False, encoding='utf-8')
+
 
 print(f"\n✅ Saved {len(all_phone_numbers)} contacts to '{file_name}'")
 
